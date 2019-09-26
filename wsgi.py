@@ -33,9 +33,6 @@ def run():
     else:
         print("Request failed")    
     return
-
-
-return predict.text
     #return render_template('result.html', message=str(response.text))
     
 @application.route('/status', methods=['POST'])

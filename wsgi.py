@@ -16,9 +16,11 @@ def run():
     # response = requests.get(application.config['URI'] + '/power' + '?user_key=' + application.config['APITOKEN'],verify=False)
     
     # Example POST invocation of the Robot API for e.g. moving  
-    data = {'user_key': application.config['APITOKEN']} 
-    response = requests.post(application.config['URI'] + '/forward/10', data=data, verify=False)
-    return response.text
+    #data = {'user_key': application.config['APITOKEN']} 
+    image = requests.post('http://192.168.151.18:5000/camera')
+    params = {'image': image}
+    predict = requests.post('http://keras-api-keras-api.apps.ocpdemo.de/predict', files=params).json()
+    return predict.text
     #return render_template('result.html', message=str(response.text))
     
 @application.route('/status', methods=['POST'])

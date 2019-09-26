@@ -15,8 +15,8 @@ def run():
     IMAGE_PATH = "image.jpg"    
     img_url = 'http://192.168.151.18:5000/camera'
     with open(IMAGE_PATH, 'wb') as output_file,\
-	requests.get(img_url, stream=True) as response:
-	shutil.copyfileobj(response.raw, output_file)
+        requests.get(img_url, stream=True) as response:
+        shutil.copyfileobj(response.raw, output_file)
     # load the input image and construct the payload for the request
     image = open(IMAGE_PATH, "rb").read()
     payload = {"image": image}

@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 import requests
 import time
+import shutil
 
 application = Flask(__name__)
 application.config.from_object('config')
@@ -11,16 +12,30 @@ def index():
 
 @application.route('/run', methods=['POST'])
 def run():
-    # Example GET invocations of the Robot API       
-    #response = requests.get(application.config['URI'] + '/distance' + '?user_key=' + application.config['APITOKEN'], verify=False)  
-    # response = requests.get(application.config['URI'] + '/power' + '?user_key=' + application.config['APITOKEN'],verify=False)
-    
-    # Example POST invocation of the Robot API for e.g. moving  
-    #data = {'user_key': application.config['APITOKEN']} 
-    image = requests.post('http://192.168.151.18:5000/camera')
-    params = {'image': image}
-    predict = requests.post('http://keras-api-keras-api.apps.ocpdemo.de/predict', files=params).json()
-    return predict.text
+    IMAGE_PATH = "image.jpg"    
+    img_url = 'http://192.168.151.18:5000/camera'
+    with open(IMAGE_PATH, 'wb') as output_file,\
+	requests.get(img_url, stream=True) as response:
+	shutil.copyfileobj(response.raw, output_file)
+    # load the input image and construct the payload for the request
+    image = open(IMAGE_PATH, "rb").read()
+    payload = {"image": image}
+    # submit the request
+    r = requests.post('http://keras-api-keras-api.apps.ocpdemo.de/predict', files=payload).json()
+    # ensure the request was successful
+    if r["success"]:
+        # loop over the predictions and display them
+        for (i, result) in enumerate(r["predictions"]):
+            print("{}. {}: {:.4f}".format(i + 1, result["label"],
+                result["probability"]))
+
+    # otherwise, the request failed
+    else:
+        print("Request failed")    
+    return
+
+
+return predict.text
     #return render_template('result.html', message=str(response.text))
     
 @application.route('/status', methods=['POST'])

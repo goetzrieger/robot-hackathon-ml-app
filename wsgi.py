@@ -32,7 +32,7 @@ def run():
     # otherwise, the request failed
     else:
         print("Request failed")    
-    return
+    return 'Done'
     #return render_template('result.html', message=str(response.text))
     
 @application.route('/status', methods=['POST'])
